@@ -1,10 +1,9 @@
 package com.hanzai.app.it.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanzai.app.constant.LibManageAdminConstant;
 import com.hanzai.app.dto.LoginResponse;
 import com.hanzai.app.model.Result;
+import com.hanzai.app.util.ObjectMapperUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,13 +94,8 @@ public class HelloControllerITTests {
     // Helper method to extract the token from the login response
     private String extractTokenFromResponse(ResponseEntity<String> response) {
         try {
-            // Using Jackson's ObjectMapper to map the response body to LoginResponse object
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            // Deserialize the response body into a LoginResponse object
-            Result<LoginResponse> loginResponse = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
-
-            // Return the token from the LoginResponse object
+            Result<LoginResponse> loginResponse = ObjectMapperUtil.jsonToObject(response.getBody());
+            assert loginResponse != null;
             return loginResponse.getData().getToken();
         } catch (Exception e) {
             // Log error if any exception occurs during parsing

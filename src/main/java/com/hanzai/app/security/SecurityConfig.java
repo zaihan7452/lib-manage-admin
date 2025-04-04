@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequest) -> {
                     authorizeHttpRequest
                             .requestMatchers(HttpMethod.POST, "/v1/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/v1/github/oauth/*").permitAll()
                             .anyRequest().authenticated();
                 })
                 .exceptionHandling(exceptionHandling -> exceptionHandling
