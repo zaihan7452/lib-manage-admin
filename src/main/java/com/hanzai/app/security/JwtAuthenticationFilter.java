@@ -93,6 +93,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().contains("/login");
+        if (request.getRequestURI().contains("/v1/auth/login")) {
+            return true;
+        }
+
+        if (request.getRequestURI().contains("/v1/github/oauth")) {
+            return true;
+        }
+
+        return false;
     }
 }
