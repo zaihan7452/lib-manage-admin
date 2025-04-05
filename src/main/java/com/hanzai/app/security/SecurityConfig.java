@@ -42,6 +42,8 @@ public class SecurityConfig {
                     authorizeHttpRequest
                             .requestMatchers("/v1/auth/login").permitAll()
                             .requestMatchers("/v1/github/oauth/*").permitAll()
+                            .requestMatchers("/swagger-ui/**").permitAll()
+                            .requestMatchers("/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated();
                 })
                 .exceptionHandling(exceptionHandling -> exceptionHandling

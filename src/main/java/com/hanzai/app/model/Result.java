@@ -1,7 +1,7 @@
 package com.hanzai.app.model;
 
 import com.hanzai.app.constant.LibManageAdminConstant;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,9 +15,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(description = "Generic result wrapper for API responses")
 public class Result<T> {
+
+    @Schema(description = "Status code", example = "200")
     private int code;
+
+    @Schema(description = "Status message", example = "Success")
     private String message;
+
+    @Schema(description = "Data payload")
     private T data;
 
     private Result(int code, String message, T data) {

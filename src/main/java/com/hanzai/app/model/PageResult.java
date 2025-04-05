@@ -1,5 +1,6 @@
 package com.hanzai.app.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,26 +15,31 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Schema(description = "Generic pagination result")
 public class PageResult<T> {
 
     /**
      * Total number of records available (across all pages).
      */
+    @Schema(description = "Total number of records available")
     private long total;
 
     /**
      * Current page number (1-based index).
      */
+    @Schema(description = "Current page number")
     private int pageNum;
 
     /**
      * Size of each page (number of items per page).
      */
+    @Schema(description = "Size of each page")
     private int pageSize;
 
     /**
      * List of data items for the current page.
      */
+    @Schema(description = "List of data items for the current page")
     private List<T> items;
 
     public static final int DEFAULT_PAGE_NUM = 1;

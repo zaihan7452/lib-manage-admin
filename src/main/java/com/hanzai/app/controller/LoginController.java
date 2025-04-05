@@ -4,6 +4,8 @@ import com.hanzai.app.dto.LoginRequest;
 import com.hanzai.app.dto.LoginResponse;
 import com.hanzai.app.model.Result;
 import com.hanzai.app.security.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/auth")
+@Tag(name = "Login API", description = "Login API")
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
@@ -33,6 +36,7 @@ public class LoginController {
      * @return login response with JWT token
      */
     @PostMapping("/login")
+    @Operation(summary = "Login", description = "Login to authenticate user and return JWT token")
     public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(

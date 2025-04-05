@@ -8,6 +8,8 @@ import com.hanzai.app.entity.GithubOauthEntity;
 import com.hanzai.app.github.GithubService;
 import com.hanzai.app.model.Result;
 import com.hanzai.app.service.IGithubOauthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.GHUser;
 import org.springframework.batch.core.Job;
@@ -23,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/v1/github")
+@Tag(name = "GitHub API", description = "GitHub API")
 public class GithubController {
 
     private final GithubService githubService;
@@ -45,6 +48,7 @@ public class GithubController {
      * Get gitHub oauth authorization url
      * @return The oauth authorization url
      */
+    @Operation(summary = "Get GitHub OAuth Authorization URL", description = "Get GitHub OAuth Authorization URL")
     @GetMapping("/oauth/authorize")
     public Result<String> oauthAuthorize() {
         return Result.success(githubService.getOauthAuthorizationUrl());
@@ -56,6 +60,7 @@ public class GithubController {
      * @return The result of the operation
      */
     @GetMapping("/oauth/callback")
+    @Operation(summary = "Handle GitHub OAuth Callback", description = "Handle GitHub OAuth Callback")
     public Result<GithubOauthResponse> oauthCallback(@RequestParam("code") String code) {
         try {
             Optional<GithubOauthResponse> optionalGithubOauthResponse = githubService.getOauthToken(code);
@@ -92,6 +97,7 @@ public class GithubController {
      * @return the result of the operation
      */
     @PostMapping("/repo/create")
+    @Operation(summary = "Create GitHub Repository", description = "Create GitHub Repository")
     public Result<GitRepoCreationResponse> createRepo(@RequestBody GitRepoCreationRequest gitRepoCreationRequest) {
         GitRepoCreationResponse gitRepoCreationResponse = new GitRepoCreationResponse();
 
