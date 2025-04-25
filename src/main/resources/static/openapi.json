@@ -1,0 +1,433 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Lib Manage Admin - OpenAPI 3.1",
+    "description": "This is the API documentation for the lib-manage-admin service, based on the OpenAPI 3.1 specification. All available endpoints can be tested and debugged interactively via the integrated Swagger UI.",
+    "contact": {
+      "email": "zai.han7452@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Login",
+      "description": "Handles user authentication"
+    },
+    {
+      "name": "Github",
+      "description": "Handles GitHub integration"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "User login",
+        "description": "Authenticate user and return JWT token",
+        "operationId": "auth_login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/SystemError"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/github/oauth/authorize": {
+      "get": {
+        "tags": [
+          "Github"
+        ],
+        "summary": "Get GitHub OAuth authorization URL",
+        "description": "Get the URL that initiates GitHub OAuth process",
+        "operationId": "github_oauth_authorize",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "string",
+                          "example": "https://github.com/login/oauth/authorize?client_id=..."
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/SystemError"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/github/oauth/callback": {
+      "get": {
+        "tags": [
+          "Github"
+        ],
+        "summary": "Handle GitHub OAuth callback",
+        "description": "Exchange code for access token and persist GitHub user info",
+        "operationId": "github_callback",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The GitHub OAuth code returned from authorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GithubOauthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/SystemError"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/github/repo/create": {
+      "post": {
+        "tags": [
+          "Github"
+        ],
+        "summary": "Create GitHub repository",
+        "description": "Trigger Spring Batch job to create a GitHub repository",
+        "operationId": "github_repo_create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitRepoCreationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRepoCreationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/SystemError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GenericResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {}
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "User's login name",
+            "example": "username"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "password"
+          }
+        }
+      },
+      "LoginResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "JWT token",
+                    "example": "eyJhbGciOiJIUzI1NiJ9..."
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "GithubOauthResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "access_token": {
+                    "type": "string",
+                    "description": "Access token from GitHub",
+                    "example": "gho_..."
+                  },
+                  "token_type": {
+                    "type": "string",
+                    "description": "Token type",
+                    "example": "bearer"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "Granted scopes",
+                    "example": "repo,user"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "GitRepoCreationRequest": {
+        "type": "object",
+        "required": [
+          "login",
+          "org",
+          "repo",
+          "description"
+        ],
+        "properties": {
+          "login": {
+            "type": "string",
+            "description": "Login user",
+            "example": "user"
+          },
+          "org": {
+            "type": "string",
+            "description": "Organization name",
+            "example": "org"
+          },
+          "repo": {
+            "type": "string",
+            "description": "Repository name",
+            "example": "repo"
+          },
+          "description": {
+            "type": "string",
+            "description": "Repository description",
+            "example": "description"
+          }
+        }
+      },
+      "GitRepoCreationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "jobInstanceId": {
+                    "type": "integer",
+                    "description": "Job instance ID triggered by Spring Batch",
+                    "example": 123456
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "data": {
+            "type": "object",
+            "example": null
+          }
+        }
+      },
+      "SystemError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Internal System Error"
+          },
+          "data": {
+            "type": "object",
+            "example": null
+          }
+        }
+      },
+      "Unauthorized": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "example": null
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BadRequest"
+            }
+          }
+        }
+      },
+      "SystemError": {
+        "description": "System Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SystemError"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Unauthorized"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

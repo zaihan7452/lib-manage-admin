@@ -101,6 +101,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return true;
         }
 
-        return false;
+        return request.getRequestURI().contains("/swagger-ui") ||
+                request.getRequestURI().contains("/v3/api-docs") ||
+                request.getRequestURI().contains("/openapi.json");
     }
 }

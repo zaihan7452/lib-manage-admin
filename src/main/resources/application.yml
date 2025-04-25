@@ -33,3 +33,8 @@ jwt:
 github:
     client-id: Ov23liUj4u6ZOfykM87p
     client-secret: a9f83bf355a8afca7b491fe89e9234c0e22ac2ac
+
+springdoc:
+    swagger-ui:
+        path: /swagger-ui.html
+        url: /openapi.json
