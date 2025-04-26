@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lib-manage-admin-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lib-manage-admin
+  template:
+    metadata:
+      labels:
+        app: lib-manage-admin
+    spec:
+      containers:
+        - name: lib-manage-admin
+          image: zaizaihan/lib-manage-admin:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: lib-manage-admin-configmap
+                  key: DB_HOST
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: lib-manage-admin-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lib-manage-admin-secret
+                  key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lib-manage-admin-service
+spec:
+  type: NodePort
+  selector:
+    app: lib-manage-admin
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30000
